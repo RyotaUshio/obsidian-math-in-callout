@@ -1,18 +1,25 @@
-import { Plugin } from 'obsidian';
-import { DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab } from './settings';
+import { MarkdownView, Plugin } from 'obsidian';
+import { DEFAULT_SETTINGS, MathInCalloutPluginSettings, MathInCalloutSettingTab } from './settings';
+import { createCalloutDecorator } from 'decorations';
+import { quoteInfoField } from 'quote-field';
+import { patchWidgetType } from 'patch-widget-type';
 
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class MathInCalloutPlugin extends Plugin {
+	settings: MathInCalloutPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
 		await this.saveSettings();
-		this.addSettingTab(new SampleSettingTab(this));
-	}
+		this.addSettingTab(new MathInCalloutSettingTab(this));
 
-	onunload() {
-
+		this.registerEditorExtension(quoteInfoField);
+		patchWidgetType(this, (builtInMathWidget) => {
+			if (this.settings.callout) {
+				this.registerEditorExtension(createCalloutDecorator(builtInMathWidget));
+				this.rerender();
+			}
+		});
 	}
 
 	async loadSettings() {
@@ -21,5 +28,18 @@ export default class MyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	rerender() {
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			if (leaf.view instanceof MarkdownView) {
+				const editor = leaf.view.editor;
+				editor.setValue(editor.getValue());
+			} else if (leaf.view.getViewType() === 'canvas') {
+				for (const node of (leaf.view as any).canvas.nodes.values()) {
+					node.setText(node.text);
+				}
+			}
+		});
 	}
 }
