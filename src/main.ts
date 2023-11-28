@@ -23,7 +23,7 @@ export default class MathInCalloutPlugin extends Plugin {
 			// Wait for the view update to finish
 			setTimeout(() => {
 				if (notReadyNotice) notReadyNotice.hide();
-				new Notice(`${this.manifest.name}: You're ready!`, 1000);
+				new Notice(`${this.manifest.name}: You're ready!`, 1500);
 				this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
 				this.rerender()
 			}, 100);
