@@ -1,22 +1,21 @@
 import { editorEditorField } from 'obsidian';
 import { syntaxTree } from '@codemirror/language';
-import { StateField, Transaction, RangeSet, RangeValue, RangeSetBuilder } from '@codemirror/state';
+import { StateField, Transaction, RangeSet, RangeValue, RangeSetBuilder, EditorState } from '@codemirror/state';
 
-const BLOCKQUOTE = /HyperMD-quote_HyperMD-quote-(?<level>[1-9][0-9]*)/;
 
 export class QuoteInfo extends RangeValue {
     pattern: RegExp | null;
 
     constructor(
         public level: number,
-        public isCallout: boolean
+        public isBaseCallout: boolean
     ) {
         super();
         this.pattern = this.level > 0 ? new RegExp(`^( {0,3}>){${this.level}}`) : null;
     }
 
     eq(other: QuoteInfo) {
-        return this.level === other.level && this.isCallout === other.isCallout
+        return this.level === other.level && this.isBaseCallout === other.isBaseCallout
     }
 
     correctMath(math: string): string {
@@ -28,6 +27,26 @@ export class QuoteInfo extends RangeValue {
                 const match = line.match(this.pattern!);
                 return match ? line.slice(match[0].length) : line;
             }).join("\n");
+    }
+
+    getBlockquoteBorderPositions(state: EditorState, from: number, to: number) {
+        const positions: { pos: number, first: boolean }[] = [];
+
+        const lineBegin = state.doc.lineAt(from);
+        const lineEnd = state.doc.lineAt(to);
+
+        for (let i = lineBegin.number; i <= lineEnd.number; i++) {
+            const line = state.doc.line(i);
+            let start = 0;
+            for (let i = 0; i < this.level; i++) {
+                const index = line.text.indexOf('>', start);
+                if (index === -1) continue;
+
+                positions.push({ pos: index + line.from, first: i === 0 });
+                start = index + 1;
+            }
+        }
+        return positions;
     }
 }
 
@@ -43,41 +62,31 @@ export const quoteInfoField = StateField.define<RangeSet<QuoteInfo>>({
 
         let level = 0;
         let from = -1;
-        const isCalloutStack: boolean[] = [];
+        let isBaseCallout = false;
 
-        tree.iterate({
-            enter(node) {
-                if (!node.node.parent) return;
+        for (let i = 1; i <= state.doc.lines; i++) {
+            const line = state.doc.line(i);
+            const match = line.text.match(/^( {0,3}>)+/);
+            const newLevel = match ? match[0].split('>').length - 1 : 0;
 
-                if (node.node.parent?.name === "Document") {
-                    const match = node.name.match(BLOCKQUOTE);
-                    const newLevel = match ? +match.groups!.level : 0;
 
-                    if (newLevel !== level) {
-                        if (level > 0 && from >= 0) {
-                            const isCallout = (newLevel > level ? isCalloutStack.last() : isCalloutStack.pop()) ?? false;
-                            builder.add(from, node.from, new QuoteInfo(level, isCallout));
-                        }
-
-                        if (newLevel > level) {
-                            isCalloutStack.push(node.name.contains("HyperMD-callout"));
-                        }
-
-                        // start off a new quote
-                        from = node.from;
-                        level = newLevel;
-                    }
+            if (newLevel !== level) {
+                if (level === 0 && newLevel === 1) {
+                    isBaseCallout = tree.cursorAt(line.from, 1).node.name.contains("-callout");
                 }
 
-                return false;
-            }
-        });
+                if (level > 0 && from >= 0) {
+                    builder.add(from, line.from, new QuoteInfo(level, isBaseCallout));
+                }
 
-        if (level > 0 && from >= 0) {
-            const isCallout = isCalloutStack.pop() ?? false;
-            builder.add(from, state.doc.length, new QuoteInfo(level, isCallout));
+                level = newLevel;
+                from = line.from;
+            }
         }
 
-        return builder.finish();
+        const ret =  builder.finish();
+
+
+        return ret;
     }
 });

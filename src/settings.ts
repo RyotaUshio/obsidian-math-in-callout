@@ -23,7 +23,7 @@ export class MathInCalloutSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Render math in callouts')
-			.setDesc("In Live Preview, the vanilla Obsidian doesn't render MathJax in callouts while editing them. Turn on this setting to enable it. This option requires a reload to take effect.")
+			.setDesc("In Live Preview, the vanilla Obsidian doesn't render MathJax in callouts with depth 1 while editing them. Turn on this setting to enable it. This option requires a reload to take effect.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.callout)
 				.onChange(async (value) => {

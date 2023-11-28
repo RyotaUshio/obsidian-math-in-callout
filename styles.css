@@ -1,0 +1,9 @@
+/* .cm-math:has(.cm-quote.cm-formatting-quote) */
+/* .cm-math:has(.cm-blockquote-border)  */
+/* { */
+    /* all: unset; */
+/* } */
+
+.cm-math:has( .cancel-cm-math) {
+    all: unset;
+}

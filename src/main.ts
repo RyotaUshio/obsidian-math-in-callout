@@ -1,25 +1,40 @@
-import { MarkdownView, Plugin } from 'obsidian';
+import { MarkdownView, Notice, Plugin } from 'obsidian';
 import { DEFAULT_SETTINGS, MathInCalloutPluginSettings, MathInCalloutSettingTab } from './settings';
 import { createCalloutDecorator } from 'decorations';
 import { quoteInfoField } from 'quote-field';
-import { patchWidgetType } from 'patch-widget-type';
+import { patchDecoration } from 'patch-widget-type';
 
+/**
+ * TODO: 
+ *   - Reduce render() call in callouts
+ */
 
 export default class MathInCalloutPlugin extends Plugin {
 	settings: MathInCalloutPluginSettings;
+	patched: boolean;
 
 	async onload() {
+		this.patched = false;
+
 		await this.loadSettings();
 		await this.saveSettings();
 		this.addSettingTab(new MathInCalloutSettingTab(this));
 
 		this.registerEditorExtension(quoteInfoField);
-		patchWidgetType(this, (builtInMathWidget) => {
+		patchDecoration(this, (builtInMathWidget) => {
 			if (this.settings.callout) {
-				this.registerEditorExtension(createCalloutDecorator(builtInMathWidget));
-				this.rerender();
+				// Wait for the view update to finish
+				setTimeout(() => {
+					this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
+					this.rerender()
+				}, 100);
 			}
 		});
+		this.app.workspace.onLayoutReady(() => {
+			if (!this.patched) {
+				new Notice(`${this.manifest.name}: You're not ready yet. In Live Preview, type some math expression outside callouts.`, 10000);
+			}
+		})
 	}
 
 	async loadSettings() {
