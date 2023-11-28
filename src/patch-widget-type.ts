@@ -23,9 +23,9 @@ export const patchDecoration = (
     const uninstaller = around(Decoration, {
         replace(old) {
             return function (spec: { widget?: WidgetType }) {
-                if (!plugin.patched && spec.widget) {
-                    const sucess = patchMathWidget(plugin, spec.widget);
-                    if (sucess) {
+                if (!plugin.patchSucceeded && spec.widget) {
+                    plugin.patchSucceeded = patchMathWidget(plugin, spec.widget);
+                    if (plugin.patchSucceeded) {
                         onPatched(spec.widget.constructor as BuiltInMathWidgetConstructor);
                         uninstaller(); // uninstall the patcher for Decoration as soon as possible
                     }
@@ -35,9 +35,9 @@ export const patchDecoration = (
         },
         widget(old) {
             return function (spec: { widget?: WidgetType }) {
-                if (!plugin.patched && spec.widget) {
-                    const sucess = patchMathWidget(plugin, spec.widget);
-                    if (sucess) {
+                if (!plugin.patchSucceeded && spec.widget) {
+                    plugin.patchSucceeded = patchMathWidget(plugin, spec.widget);
+                    if (plugin.patchSucceeded) {
                         onPatched(spec.widget.constructor as BuiltInMathWidgetConstructor);
                         uninstaller(); // uninstall the patcher for Decoration as soon as possible
                     }
