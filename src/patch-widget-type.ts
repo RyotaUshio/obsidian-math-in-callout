@@ -25,33 +25,6 @@ export const patchDecoration = (
         replace(old) {
             return function (spec: { widget?: WidgetType }) {
                 if (!plugin.patched && spec.widget) {
-                    // const proto = spec.widget.constructor.prototype;
-                    // const isObsidianBuiltinMathWidget = Object.hasOwn(spec.widget, 'math') && Object.hasOwn(spec.widget, 'block') && Object.hasOwn(proto, 'initDOM') && Object.hasOwn(proto, 'render') && !Object.hasOwn(proto, 'toDOM');
-                    // if (isObsidianBuiltinMathWidget) {
-                    //     plugin.register(around(proto, {
-                    //         initDOM(old) {
-                    //             return function (view: EditorView) {
-                    //                 if (!this.view) this.view = view;
-                    //                 return old.call(this, view);
-                    //             }
-                    //         },
-                    //         patchDOM(old) {
-                    //             return function (dom: HTMLElement, view: EditorView) {
-                    //                 if (!this.view) this.view = view;
-                    //                 return old.call(this, dom, view);
-                    //             }
-                    //         },
-                    //         render(old) {
-                    //             return function (dom: HTMLElement) {
-                    //                 if (plugin.settings.multiLine && this.block && this.view) {
-                    //                     const field = (this.view as EditorView).state.field(quoteInfoField, false);
-                    //                     const quote = field?.iter(this.start).value;
-                    //                     this.math = quote?.correctMath(this.math) ?? this.math;
-                    //                 }
-                    //                 old.call(this, dom);
-                    //             }
-                    //         }
-                    //     }));
                     const sucess = patchMathWidget(plugin, spec.widget);
                     if (sucess) {
                         plugin.patched = true;

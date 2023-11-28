@@ -4,11 +4,6 @@ import { createCalloutDecorator } from 'decorations';
 import { quoteInfoField } from 'quote-field';
 import { patchDecoration } from 'patch-widget-type';
 
-/**
- * TODO: 
- *   - Reduce render() call in callouts
- */
-
 export default class MathInCalloutPlugin extends Plugin {
 	settings: MathInCalloutPluginSettings;
 	patched: boolean;
