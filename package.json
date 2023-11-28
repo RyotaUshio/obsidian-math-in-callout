@@ -1,6 +1,6 @@
 {
 	"name": "math-in-callout",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Add a better Live Preview support for math rendering inside callouts & blockquotes.",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
