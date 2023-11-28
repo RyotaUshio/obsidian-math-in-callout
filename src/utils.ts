@@ -31,3 +31,14 @@ export function printNode(node: SyntaxNodeRef, state: EditorState) {
     );
 }
 
+export function printRangeSet<T extends RangeValue>(set: RangeSet<T>, format?: (from: number, to: number, value: T) => any | any[]) {
+    set.between(0, Infinity, (from, to, value) => {
+        if (format) {
+            const message = format(from, to, value)
+            if (Array.isArray(message)) console.log(...message);
+            else console.log(message);
+        } else {
+            console.log(`${from}-${to}: ${value}`);
+        }
+    });
+}

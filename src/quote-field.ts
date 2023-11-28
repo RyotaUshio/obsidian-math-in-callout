@@ -1,4 +1,3 @@
-import { editorEditorField } from 'obsidian';
 import { syntaxTree } from '@codemirror/language';
 import { StateField, Transaction, RangeSet, RangeValue, RangeSetBuilder, EditorState } from '@codemirror/state';
 
@@ -58,42 +57,45 @@ export class QuoteInfo extends RangeValue {
 }
 
 export const quoteInfoField = StateField.define<RangeSet<QuoteInfo>>({
-    create() {
-        return RangeSet.empty;
+    create(state: EditorState) {
+        return parseBlockquotes(state);
     },
     update(prev: RangeSet<QuoteInfo>, tr: Transaction) {
-        const view = tr.state.field(editorEditorField);
-        const state = tr.state;
-        const tree = syntaxTree(state);
-        const builder = new RangeSetBuilder<QuoteInfo>();
-
-        let level = 0;
-        let from = -1;
-        let isBaseCallout = false;
-
-        for (let i = 1; i <= state.doc.lines; i++) {
-            const line = state.doc.line(i);
-            const match = line.text.match(/^( {0,3}>)+/);
-            const newLevel = match ? match[0].split('>').length - 1 : 0;
-
-
-            if (newLevel !== level) {
-                if (level === 0 && newLevel === 1) {
-                    isBaseCallout = tree.cursorAt(line.from, 1).node.name.contains("-callout");
-                }
-
-                if (level > 0 && from >= 0) {
-                    builder.add(from, line.from, new QuoteInfo(level, isBaseCallout));
-                }
-
-                level = newLevel;
-                from = line.from;
-            }
-        }
-
-        const ret =  builder.finish();
-
-
-        return ret;
+        return parseBlockquotes(tr.state);
     }
 });
+
+
+function parseBlockquotes(state: EditorState) {
+    const tree = syntaxTree(state);
+    const builder = new RangeSetBuilder<QuoteInfo>();
+
+    let level = 0;
+    let from = -1;
+    let isBaseCallout = false;
+
+    for (let i = 1; i <= state.doc.lines; i++) {
+        const line = state.doc.line(i);
+        const match = line.text.match(/^( {0,3}>)+/);
+        const newLevel = match ? match[0].split('>').length - 1 : 0;
+
+        if (newLevel !== level) {
+            if (level === 0 && newLevel === 1) {
+                isBaseCallout = tree.cursorAt(line.from, 1).node.name.contains("-callout");
+            }
+
+            if (level > 0 && from >= 0) {
+                builder.add(from, line.from, new QuoteInfo(level, isBaseCallout));
+            }
+
+            level = newLevel;
+            from = line.from;
+        }
+    }
+
+    if (level > 0 && from >= 0) {
+        builder.add(from, state.doc.length, new QuoteInfo(level, isBaseCallout));
+    }
+
+    return builder.finish();
+}

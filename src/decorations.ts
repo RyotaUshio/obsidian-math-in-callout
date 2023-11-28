@@ -1,4 +1,4 @@
-import { SelectionRange, RangeSetBuilder, Range, StateField, Transaction, Extension } from '@codemirror/state';
+import { Range, StateField, Transaction, Extension } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { EditorView, Decoration, DecorationSet, WidgetType } from '@codemirror/view';
 import { quoteInfoField } from 'quote-field';
@@ -19,6 +19,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
     create() {
         return Decoration.none;
     },
+
     update(prev: DecorationSet, tr: Transaction): DecorationSet {
         const { state } = tr;
         const isSourceMode = !state.field(editorLivePreviewField);
@@ -57,7 +58,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
 
                         const widget = new BuiltInMathWidget(math, block);
                         // @ts-ignore
-                        widget.markAsCorrected();
+                        if (quote) widget.markAsCorrected();
                         // @ts-ignore
                         widget.setPos(
                             block && math.startsWith("\n") ? mathContentBegin + 1 : mathContentBegin,
@@ -109,7 +110,6 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                             }
                         }
 
-
                         if (overlap) {
                             if (block) {
                                 if (quote?.isBaseCallout) {
@@ -132,18 +132,19 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                                     }, mathBegin, mathEnd).range(mathBegin, mathEnd)
                                 );
                             }
-                            mathBegin = -1;
-                            mathContentBegin = -1;
                         }
+
+                        mathBegin = -1;
+                        mathContentBegin = -1;
                     }
                 }
             }
         });
-        // return builder.finish();
+
         return Decoration.set(decorations, true);
     },
+
     provide(field: StateField<DecorationSet>): Extension {
         return EditorView.decorations.from(field);
-    },
-}
-);
+    }
+});
