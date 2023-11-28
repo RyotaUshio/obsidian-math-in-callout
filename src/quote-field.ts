@@ -1,5 +1,6 @@
 import { syntaxTree } from '@codemirror/language';
 import { StateField, Transaction, RangeSet, RangeValue, RangeSetBuilder, EditorState } from '@codemirror/state';
+import { printRangeSet } from 'utils';
 
 /**
  * A range value that represents a blockquote or a callout. 
@@ -98,4 +99,10 @@ function parseBlockquotes(state: EditorState) {
     }
 
     return builder.finish();
+
+    // printRangeSet(ret, (from, to, value) => {
+    //     const lineBegin = state.doc.lineAt(from);
+    //     const lineEnd = state.doc.lineAt(to);
+    //     return `${from}-${to} [${lineBegin.number}, ${lineEnd.number - 1}]: level=${value.level} isBaseCallout=${value.isBaseCallout}`;
+    // });
 }

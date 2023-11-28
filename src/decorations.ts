@@ -3,7 +3,7 @@ import { syntaxTree } from '@codemirror/language';
 import { EditorView, Decoration, DecorationSet, WidgetType } from '@codemirror/view';
 import { quoteInfoField } from 'quote-field';
 import { editorEditorField, editorLivePreviewField } from 'obsidian';
-import { rangesHaveOverlap } from 'utils';
+import { getQuoteInfo, rangesHaveOverlap } from 'utils';
 import MathInCalloutPlugin from 'main';
 import { BuiltInMathWidgetConstructor } from 'patch-widget-type';
 
@@ -52,8 +52,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                         const mathEnd = node.to;
 
                         let math = doc.sliceString(mathContentBegin, mathContentEnd);
-                        const field = state.field(quoteInfoField, false);
-                        const quote = field?.iter(mathContentBegin).value;
+                        const quote = getQuoteInfo(state, mathContentBegin);
                         if (quote) math = quote.correctMath(math);
 
                         const widget = new BuiltInMathWidget(math, block);
@@ -65,7 +64,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
 
                         const overlap = rangesHaveOverlap(ranges, mathBegin, mathEnd);
 
-                        if (quote) {
+                        if (quote && quote.level > 0) {
                             if (isSourceMode || quote.isBaseCallout || overlap) {
 
                                 const lineBegin = state.doc.lineAt(mathBegin);
@@ -129,29 +128,6 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                                 );
                             }
                         }
-                        // if (overlap) {
-                        //     if (block) {
-                        //         if (quote?.isBaseCallout) {
-                        //             decorations.push(
-                        //                 Decoration.widget({
-                        //                     widget,
-                        //                     block: false,
-                        //                     side: 1
-                        //                 }).range(mathEnd, mathEnd)
-                        //             );
-                        //         }
-                        //     }
-                        // } else {
-                        //     if (quote?.isBaseCallout) {
-                        //         decorations.push(
-                        //             makeDeco({
-                        //                 widget,
-                        //                 block: false,
-                        //                 side: 1
-                        //             }, mathBegin, mathEnd).range(mathBegin, mathEnd)
-                        //         );
-                        //     }
-                        // }
 
                         mathBegin = -1;
                         mathContentBegin = -1;

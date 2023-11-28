@@ -5,6 +5,7 @@ import { around } from "monkey-around";
 
 import MathInCalloutPlugin from 'main';
 import { QuoteInfo, quoteInfoField } from 'quote-field';
+import { getQuoteInfo } from 'utils';
 
 // constructor of Obsidian's built-in math widget
 export type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => BuiltInMathWidget;
@@ -90,12 +91,7 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
         plugin.register(around(proto, {
             getQuoteInfo() {
                 return function (): QuoteInfo | null {
-                    if (this.view) {
-                        const field = this.view.state.field(quoteInfoField, false);
-                        const quote = field?.iter(this.start).value;
-                        return quote ?? null;
-                    }
-                    return null
+                    return this.view ? getQuoteInfo(this.view.state, this.start) : null;
                 }
             },
             markAsCorrected() {
