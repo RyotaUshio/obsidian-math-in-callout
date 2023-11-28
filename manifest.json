@@ -1,7 +1,7 @@
 {
 	"id": "math-in-callout",
 	"name": "Better Math in Callouts & Blockquotes",
-	"version": "0.2.8",
+	"version": "0.2.9",
 	"minAppVersion": "1.3.15",
 	"description": "Add a better Live Preview support for math rendering inside callouts & blockquotes.",
 	"author": "Ryota Ushio",
