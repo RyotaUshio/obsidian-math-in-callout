@@ -4,10 +4,22 @@ import { WidgetType } from '@codemirror/view';
 import { around } from "monkey-around";
 
 import MathInCalloutPlugin from 'main';
-import { quoteInfoField } from 'quote-field';
+import { QuoteInfo, quoteInfoField } from 'quote-field';
 
 // constructor of Obsidian's built-in math widget
-type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => WidgetType;
+type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => BuiltInMathWidget;
+
+interface BuiltInMathWidget extends WidgetType {
+    math: string;
+    block: boolean;
+    start: number;
+    // the followings are added by this plugin
+    getQuoteInfo(view?: EditorView): QuoteInfo | null;
+    correctIfNecessary(view?: EditorView): void;
+    markAsCorrected(): void;
+    corrected?: boolean;
+    view?: EditorView;
+}
 
 /**
  * Monkey-patch the built-in math widget to add a better support for multi-line math in blockquotes.
@@ -17,7 +29,7 @@ type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => Widget
  * @param onPatched Callback executed when the built-in math widget is patched.
  */
 export const patchDecoration = (
-    plugin: MathInCalloutPlugin, 
+    plugin: MathInCalloutPlugin,
     onPatched: (builtInMathWidget: BuiltInMathWidgetConstructor) => void
 ) => {
     const uninstaller = around(Decoration, {
@@ -55,9 +67,41 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
     const isObsidianBuiltinMathWidget = Object.hasOwn(widget, 'math') && Object.hasOwn(widget, 'block') && Object.hasOwn(proto, 'initDOM') && Object.hasOwn(proto, 'render') && !Object.hasOwn(proto, 'toDOM');
     if (isObsidianBuiltinMathWidget) {
         plugin.register(around(proto, {
+            getQuoteInfo() {
+                return function (view?: EditorView): QuoteInfo | null {
+                    view = this.view ?? view;
+                    if (view) {
+                        const field = view.state.field(quoteInfoField, false);
+                        const quote = field?.iter(this.start).value;
+                        return quote ?? null;
+                    }
+                    return null
+                }
+            },
             markAsCorrected() {
-                return function() {
+                return function () {
                     this.corrected = true;
+                }
+            },
+            correctIfNecessary() {
+                return function (view?: EditorView) {
+                    if (this.block && !this.corrected) {
+                        const quote = this.getQuoteInfo(view);
+                        if (quote) {
+                            this.math = quote.correctMath(this.math);
+                            this.markAsCorrected();
+                        }
+                    }
+                }
+            },
+            eq(old) {
+                return function (other: BuiltInMathWidget): boolean {
+                    // TODO: Can we further reduce the chance of unnecessary re-rendering of multi-line math blocks in blockquotes?
+                    if (this.block && other.block) {
+                        if (!this.corrected) this.correctIfNecessary(this.view ?? other.view);
+                        if (!other.corrected) other.correctIfNecessary(other.view ?? this.view);
+                    }
+                    return old.call(this, other);
                 }
             },
             initDOM(old) {
@@ -74,11 +118,7 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             },
             render(old) {
                 return function (dom: HTMLElement) {
-                    if (this.block && !this.corrected && this.view) {
-                        const field = (this.view as EditorView).state.field(quoteInfoField, false);
-                        const quote = field?.iter(this.start).value;
-                        if (quote) this.math = quote.correctMath(this.math);
-                    }
+                    this.correctIfNecessary();
                     old.call(this, dom);
                 }
             }
