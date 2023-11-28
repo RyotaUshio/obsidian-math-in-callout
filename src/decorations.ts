@@ -24,7 +24,6 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
     update(prev: DecorationSet, tr: Transaction): DecorationSet {
         const { state } = tr;
         const isSourceMode = !state.field(editorLivePreviewField);
-        if (isSourceMode) return Decoration.none;
 
         const view = state.field(editorEditorField);
         const tree = syntaxTree(state);
@@ -67,7 +66,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                         const overlap = rangesHaveOverlap(ranges, mathBegin, mathEnd);
 
                         if (quote) {
-                            if (quote.isBaseCallout || overlap) {
+                            if (isSourceMode || quote.isBaseCallout || overlap) {
 
                                 const lineBegin = state.doc.lineAt(mathBegin);
                                 const lineEnd = state.doc.lineAt(mathEnd);
@@ -79,7 +78,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                                         Decoration.line({ class: "HyperMD-quote" }).range(line.from, line.from)
                                     );
 
-                                    const transparent = !rangesHaveOverlap(ranges, line.from, line.to);
+                                    const transparent = !isSourceMode && !rangesHaveOverlap(ranges, line.from, line.to);
                                     let start = 0;
 
                                     for (let i = 0; i < quote.level; i++) {
@@ -109,20 +108,18 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                             }
                         }
 
-                        if (overlap) {
-                            if (block) {
-                                if (quote?.isBaseCallout) {
+                        if (!isSourceMode && quote?.isBaseCallout) {
+                            if (overlap) {
+                                if (block) {
                                     decorations.push(
                                         Decoration.widget({
                                             widget,
                                             block: false,
                                             side: 1
                                         }).range(mathEnd, mathEnd)
-                                    );
+                                    );    
                                 }
-                            }
-                        } else {
-                            if (quote?.isBaseCallout) {
+                            } else {
                                 decorations.push(
                                     makeDeco({
                                         widget,
@@ -132,6 +129,29 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                                 );
                             }
                         }
+                        // if (overlap) {
+                        //     if (block) {
+                        //         if (quote?.isBaseCallout) {
+                        //             decorations.push(
+                        //                 Decoration.widget({
+                        //                     widget,
+                        //                     block: false,
+                        //                     side: 1
+                        //                 }).range(mathEnd, mathEnd)
+                        //             );
+                        //         }
+                        //     }
+                        // } else {
+                        //     if (quote?.isBaseCallout) {
+                        //         decorations.push(
+                        //             makeDeco({
+                        //                 widget,
+                        //                 block: false,
+                        //                 side: 1
+                        //             }, mathBegin, mathEnd).range(mathBegin, mathEnd)
+                        //         );
+                        //     }
+                        // }
 
                         mathBegin = -1;
                         mathContentBegin = -1;
