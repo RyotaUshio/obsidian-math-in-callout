@@ -1,6 +1,6 @@
-# Better Math in Callouts/Blockquotes
+# Better Math in Callouts & Blockquotes
 
-This is an [Obsidian.md](https://obsidian.md) plugin to add a better support for math rendering inside callouts/blockquotes to Live Preview.
+This is an [Obsidian.md](https://obsidian.md) plugin to add a better Live Preview support for math rendering inside callouts & blockquotes.
 
 > Note: The features of this plugin are originally a part of [Math Booster](https://ryotaushio.github.io/obsidian-math-booster/), another community plugin of mine. Once this plugin is approved by the Obsidian team, they will be removed from Math Booster.
 
@@ -52,7 +52,7 @@ But you can install the latest beta release using [BRAT](https://github.com/TfTH
 2.  Go to `Options`. In the `Beta Plugin List` section, click on the `Add Beta plugin` button.
 3.  Copy and paste `RyotaUshio/obsidian-math-in-callout` in the pop-up prompt and click on **Add Plugin**.
 4.  _(Optional but highly recommended)_ Turn on `Auto-update plugins at startup` at the top of the page.
-5.  Go to `Community plugins > Installed plugins`. You will find “Better Math in Callouts/Blockquotes” in the list. Click on the toggle button to enable it.
+5.  Go to `Community plugins > Installed plugins`. You will find “Better Math in Callouts & Blockquotes” in the list. Click on the toggle button to enable it.
 
 ## Support development
 
