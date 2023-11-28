@@ -14,8 +14,8 @@ interface BuiltInMathWidget extends WidgetType {
     block: boolean;
     start: number;
     // the followings are added by this plugin
-    getQuoteInfo(view?: EditorView): QuoteInfo | null;
-    correctIfNecessary(view?: EditorView): void;
+    getQuoteInfo(): QuoteInfo | null;
+    correctIfNecessary(): void;
     markAsCorrected(): void;
     corrected?: boolean;
     view?: EditorView;
@@ -68,10 +68,9 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
     if (isObsidianBuiltinMathWidget) {
         plugin.register(around(proto, {
             getQuoteInfo() {
-                return function (view?: EditorView): QuoteInfo | null {
-                    view = this.view ?? view;
-                    if (view) {
-                        const field = view.state.field(quoteInfoField, false);
+                return function (): QuoteInfo | null {
+                    if (this.view) {
+                        const field = this.view.state.field(quoteInfoField, false);
                         const quote = field?.iter(this.start).value;
                         return quote ?? null;
                     }
@@ -84,9 +83,9 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
                 }
             },
             correctIfNecessary() {
-                return function (view?: EditorView) {
+                return function () {
                     if (this.block && !this.corrected) {
-                        const quote = this.getQuoteInfo(view);
+                        const quote = this.getQuoteInfo();
                         if (quote) {
                             this.math = quote.correctMath(this.math);
                             this.markAsCorrected();
@@ -98,8 +97,12 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
                 return function (other: BuiltInMathWidget): boolean {
                     // TODO: Can we further reduce the chance of unnecessary re-rendering of multi-line math blocks in blockquotes?
                     if (this.block && other.block) {
-                        if (!this.corrected) this.correctIfNecessary(this.view ?? other.view);
-                        if (!other.corrected) other.correctIfNecessary(other.view ?? this.view);
+                        // share editor view to make it easy to obtain QuoteInfo and minimize unnecessary re-rendering
+                        if (this.view && !other.view) other.view = this.view;
+                        if (other.view && !this.view) this.view = other.view;
+                        // correct math (i.e. remove an appropreate number of ">"s at the head of each line) before comparing
+                        if (!this.corrected) this.correctIfNecessary();
+                        if (!other.corrected) other.correctIfNecessary();
                     }
                     return old.call(this, other);
                 }
@@ -119,6 +122,7 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             render(old) {
                 return function (dom: HTMLElement) {
                     this.correctIfNecessary();
+                    console.log('render');
                     old.call(this, dom);
                 }
             }
