@@ -17,11 +17,12 @@ export default class MathInCalloutPlugin extends Plugin {
 
 		this.registerEditorExtension(quoteInfoField);
 
-		this.app.workspace.onLayoutReady(() => {
+		// Wait for a second to avoid showing the "You're not ready yet" notification when it's not necessary
+		this.app.workspace.onLayoutReady(() => setTimeout(() => {
 			if (!this.patched) {
 				new Notice(`${this.manifest.name}: You're not ready yet. In Live Preview, type some math expression outside callouts.`, 10000);
 			}
-		})
+		}, 1000));
 
 		patchDecoration(this, (builtInMathWidget) => {
 			// Wait for the view update to finish

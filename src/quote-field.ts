@@ -2,10 +2,16 @@ import { editorEditorField } from 'obsidian';
 import { syntaxTree } from '@codemirror/language';
 import { StateField, Transaction, RangeSet, RangeValue, RangeSetBuilder, EditorState } from '@codemirror/state';
 
-
+/**
+ * A range value that represents a blockquote or a callout. 
+ */
 export class QuoteInfo extends RangeValue {
     pattern: RegExp | null;
 
+    /**
+     * @param level The level of the blockquote/callout (i.e. the number of ">"s).
+     * @param isBaseCallout True if this is a callout or this is on top of a callout of level 1.
+     */
     constructor(
         public level: number,
         public isBaseCallout: boolean
@@ -18,6 +24,7 @@ export class QuoteInfo extends RangeValue {
         return this.level === other.level && this.isBaseCallout === other.isBaseCallout
     }
 
+    /** Remove ">"s that is misrecognized as inequality signs. */
     correctMath(math: string): string {
         if (!this.pattern) return math;
 
