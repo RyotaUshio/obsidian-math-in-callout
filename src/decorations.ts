@@ -7,6 +7,14 @@ import { rangesHaveOverlap } from 'utils';
 import MathInCalloutPlugin from 'main';
 
 
+/**
+ * Creates a state field that provides the following decorations:
+ *   - Math expressions in callouts
+ *   - Blockquote borders (">"s etc) in blockquotes & callouts
+ * 
+ * The implementation of this function was deeply inspired by the state field
+ * defined in the "QF" function in Obsidian's app.js.
+ */
 export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathWidget: new (math: string, block: boolean) => WidgetType) => StateField.define<DecorationSet>({
     create() {
         return Decoration.none;
