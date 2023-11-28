@@ -16,20 +16,24 @@ export default class MathInCalloutPlugin extends Plugin {
 		this.addSettingTab(new MathInCalloutSettingTab(this));
 
 		this.registerEditorExtension(quoteInfoField);
-		patchDecoration(this, (builtInMathWidget) => {
-			if (this.settings.callout) {
-				// Wait for the view update to finish
-				setTimeout(() => {
-					this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
-					this.rerender()
-				}, 100);
-			}
-		});
+
 		this.app.workspace.onLayoutReady(() => {
 			if (!this.patched) {
 				new Notice(`${this.manifest.name}: You're not ready yet. In Live Preview, type some math expression outside callouts.`, 10000);
 			}
 		})
+
+		patchDecoration(this, (builtInMathWidget) => {
+			// Wait for the view update to finish
+			setTimeout(() => {
+				this.patched = true;
+				new Notice(`${this.manifest.name}: You're ready!`);
+				if (this.settings.callout) {
+					this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
+				}
+				this.rerender()
+			}, 100);
+		});
 	}
 
 	async loadSettings() {

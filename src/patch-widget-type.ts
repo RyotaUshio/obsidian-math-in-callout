@@ -5,7 +5,6 @@ import { around } from "monkey-around";
 
 import MathInCalloutPlugin from 'main';
 import { quoteInfoField } from 'quote-field';
-import { Notice } from 'obsidian';
 
 // constructor of Obsidian's built-in math widget
 type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => WidgetType;
@@ -27,8 +26,6 @@ export const patchDecoration = (
                 if (!plugin.patched && spec.widget) {
                     const sucess = patchMathWidget(plugin, spec.widget);
                     if (sucess) {
-                        plugin.patched = true;
-                        new Notice(`${plugin.manifest.name}: You're ready!`);
                         onPatched(spec.widget.constructor as BuiltInMathWidgetConstructor);
                         uninstaller(); // uninstall the patcher for Decoration as soon as possible
                     }
@@ -41,8 +38,6 @@ export const patchDecoration = (
                 if (!plugin.patched && spec.widget) {
                     const sucess = patchMathWidget(plugin, spec.widget);
                     if (sucess) {
-                        plugin.patched = true;
-                        new Notice(`${plugin.manifest.name}: You're ready!`);
                         onPatched(spec.widget.constructor as BuiltInMathWidgetConstructor);
                         uninstaller(); // uninstall the patcher for Decoration as soon as possible
                     }
