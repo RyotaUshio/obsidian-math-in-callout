@@ -122,7 +122,6 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             render(old) {
                 return function (dom: HTMLElement) {
                     this.correctIfNecessary();
-                    console.log('render');
                     old.call(this, dom);
                 }
             }
