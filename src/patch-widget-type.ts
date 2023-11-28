@@ -74,7 +74,7 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             },
             render(old) {
                 return function (dom: HTMLElement) {
-                    if (plugin.settings.multiLine && this.block && !this.corrected && this.view) {
+                    if (this.block && !this.corrected && this.view) {
                         const field = (this.view as EditorView).state.field(quoteInfoField, false);
                         const quote = field?.iter(this.start).value;
                         if (quote) this.math = quote.correctMath(this.math);

@@ -66,7 +66,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
 
                         const overlap = rangesHaveOverlap(ranges, mathBegin, mathEnd);
 
-                        if (quote && plugin.settings.multiLine) {
+                        if (quote) {
                             if (quote.isBaseCallout || overlap) {
 
                                 const lineBegin = state.doc.lineAt(mathBegin);

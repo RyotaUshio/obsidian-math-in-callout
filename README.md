@@ -13,8 +13,6 @@ This plugin solves this problem.
 
 Moreover, it also enables proper handling of multi-line math blocks; see [the next section](math-in-lockquotes) below.
 
-This feature can be toggled in the plugin setting tab.
-
 #### Example
 
  Without this plugin                 | With this plugin
@@ -24,8 +22,6 @@ This feature can be toggled in the plugin setting tab.
 ### Math in Blockquotes
 
 In Live Preview, the vanilla Obsidian misunderstands a ">" symbol at the beginning of a line in a blockquote or a callout as an inequality sign ("greater than") in multi-line math blocks, while Reading View properly recognizes them. This plugin makes them consistent with Reading View. 
-
-This feature also can be toggled in the plugin setting tab.
 
 #### Example
 

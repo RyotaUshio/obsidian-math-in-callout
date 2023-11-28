@@ -1,19 +1,13 @@
 import { MarkdownView, Notice, Plugin } from 'obsidian';
-import { DEFAULT_SETTINGS, MathInCalloutPluginSettings, MathInCalloutSettingTab } from './settings';
 import { createCalloutDecorator } from 'decorations';
 import { quoteInfoField } from 'quote-field';
 import { patchDecoration } from 'patch-widget-type';
 
 export default class MathInCalloutPlugin extends Plugin {
-	settings: MathInCalloutPluginSettings;
 	patchSucceeded: boolean;
 
 	async onload() {
 		this.patchSucceeded = false;
-
-		await this.loadSettings();
-		await this.saveSettings();
-		this.addSettingTab(new MathInCalloutSettingTab(this));
 
 		this.registerEditorExtension(quoteInfoField);
 
@@ -28,20 +22,10 @@ export default class MathInCalloutPlugin extends Plugin {
 			// Wait for the view update to finish
 			setTimeout(() => {
 				new Notice(`${this.manifest.name}: You're ready!`);
-				if (this.settings.callout) {
-					this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
-				}
+				this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
 				this.rerender()
 			}, 100);
 		});
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 
 	rerender() {
