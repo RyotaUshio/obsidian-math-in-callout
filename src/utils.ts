@@ -24,14 +24,10 @@ export function rangeSetHas<T extends RangeValue>(e: RangeSet<T>, target: T, fro
     return found;
 }
 
-export function nodeText(node: SyntaxNodeRef, state: EditorState): string {
-    return state.sliceDoc(node.from, node.to);
-}
-
+// Debugging utility
 export function printNode(node: SyntaxNodeRef, state: EditorState) {
-    // Debugging utility
     console.log(
-        `${node.from}-${node.to}: "${nodeText(node, state)}" (${node.name})`
+        `${node.from}-${node.to}: "${state.sliceDoc(node.from, node.to)}" (${node.name})`
     );
 }
 

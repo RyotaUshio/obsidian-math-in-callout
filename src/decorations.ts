@@ -43,13 +43,18 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                         const mathEnd = node.to;
 
                         let math = doc.sliceString(mathContentBegin, mathContentEnd);
+                        const field = state.field(quoteInfoField, false);
+                        const quote = field?.iter(mathContentBegin).value;
+                        if (quote) math = quote.correctMath(math);
 
                         const widget = new BuiltInMathWidget(math, block);
                         // @ts-ignore
-                        widget.setPos(block && math.startsWith("\n") ? mathContentBegin + 1 : mathContentBegin, block && math.endsWith("\n") ? mathContentEnd - 1 : mathContentEnd);
-
-                        const field = state.field(quoteInfoField, false);
-                        const quote = field?.iter((widget as any).start).value;
+                        widget.markAsCorrected();
+                        // @ts-ignore
+                        widget.setPos(
+                            block && math.startsWith("\n") ? mathContentBegin + 1 : mathContentBegin,
+                            block && math.endsWith("\n") ? mathContentEnd - 1 : mathContentEnd
+                        );
 
                         const overlap = rangesHaveOverlap(ranges, mathBegin, mathEnd);
 

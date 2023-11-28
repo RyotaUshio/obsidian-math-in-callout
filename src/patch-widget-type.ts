@@ -87,6 +87,11 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
     const isObsidianBuiltinMathWidget = Object.hasOwn(widget, 'math') && Object.hasOwn(widget, 'block') && Object.hasOwn(proto, 'initDOM') && Object.hasOwn(proto, 'render') && !Object.hasOwn(proto, 'toDOM');
     if (isObsidianBuiltinMathWidget) {
         plugin.register(around(proto, {
+            markAsCorrected() {
+                return function() {
+                    this.corrected = true;
+                }
+            },
             initDOM(old) {
                 return function (view: EditorView) {
                     if (!this.view) this.view = view;
@@ -101,10 +106,10 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             },
             render(old) {
                 return function (dom: HTMLElement) {
-                    if (plugin.settings.multiLine && this.block && this.view) {
+                    if (plugin.settings.multiLine && this.corrected !== true && this.block && this.view) {
                         const field = (this.view as EditorView).state.field(quoteInfoField, false);
                         const quote = field?.iter(this.start).value;
-                        this.math = quote?.correctMath(this.math) ?? this.math;
+                        if (quote) this.math = quote.correctMath(this.math);
                     }
                     old.call(this, dom);
                 }
