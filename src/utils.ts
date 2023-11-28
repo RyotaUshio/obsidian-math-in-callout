@@ -2,6 +2,7 @@ import { SelectionRange, RangeSet, RangeValue, EditorState } from '@codemirror/s
 import { SyntaxNodeRef } from '@lezer/common';
 import { QuoteInfo, quoteInfoField } from 'quote-field';
 
+/** Get a quote info for the given position. */
 export function getQuoteInfo(state: EditorState, pos: number): QuoteInfo | null {
     const field = state.field(quoteInfoField, false);
     if (!field) return null;
@@ -24,18 +25,10 @@ export function rangesHaveOverlap(ranges: readonly SelectionRange[], start: numb
     return false;
 }
 
-export function rangeSetHas<T extends RangeValue>(e: RangeSet<T>, target: T, from: number, to: number) {
-    let found = false;
-    e.between(from, to, (start, end, value) => {
-        if (value === target) {
-            found = true;
-            return false;
-        }
-    });
-    return found;
-}
+/////////////////////////
+// Debugging utilities //
+/////////////////////////
 
-// Debugging utility
 export function printNode(node: SyntaxNodeRef, state: EditorState) {
     console.log(
         `${node.from}-${node.to}: "${state.sliceDoc(node.from, node.to)}" (${node.name})`

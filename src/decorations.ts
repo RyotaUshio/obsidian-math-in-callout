@@ -1,7 +1,6 @@
 import { Range, StateField, Transaction, Extension } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { EditorView, Decoration, DecorationSet, WidgetType } from '@codemirror/view';
-import { quoteInfoField } from 'quote-field';
 import { editorEditorField, editorLivePreviewField } from 'obsidian';
 import { getQuoteInfo, rangesHaveOverlap } from 'utils';
 import MathInCalloutPlugin from 'main';
@@ -64,6 +63,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
 
                         const overlap = rangesHaveOverlap(ranges, mathBegin, mathEnd);
 
+                        // Add blockquote-related decorations to ">"s, mimicing Obsidian's built-in ones.
                         if (quote && quote.level > 0) {
                             if (isSourceMode || quote.isBaseCallout || overlap) {
 
@@ -107,6 +107,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                             }
                         }
 
+                        // Add decorations to math expressions in callouts.
                         if (!isSourceMode && quote?.isBaseCallout) {
                             if (overlap) {
                                 if (block) {

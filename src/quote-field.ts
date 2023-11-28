@@ -9,7 +9,7 @@ export class QuoteInfo extends RangeValue {
 
     /**
      * @param level The level of the blockquote/callout (i.e. the number of ">"s).
-     * @param isBaseCallout True if this is a callout or this is on top of a callout of level 1.
+     * @param isBaseCallout True if this is a callout or this is nested inside a callout of level 1.
      */
     constructor(
         public level: number,
@@ -56,6 +56,10 @@ export class QuoteInfo extends RangeValue {
     }
 }
 
+/** 
+ * A state field that stores positions and additional infomations (represented as QuoteInfo)
+ * of blockquotes and callouts inside a note as a range set. 
+ */
 export const quoteInfoField = StateField.define<RangeSet<QuoteInfo>>({
     create(state: EditorState) {
         return parseBlockquotes(state);

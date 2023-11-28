@@ -4,7 +4,7 @@ import { WidgetType } from '@codemirror/view';
 import { around } from "monkey-around";
 
 import MathInCalloutPlugin from 'main';
-import { QuoteInfo, quoteInfoField } from 'quote-field';
+import { QuoteInfo } from 'quote-field';
 import { getQuoteInfo } from 'utils';
 
 // constructor of Obsidian's built-in math widget
@@ -65,6 +65,7 @@ export const patchDecoration = (
 
 
 function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boolean {
+    // check if the given widget is the built-in math widget based on its & its prototype's properties
     const proto = widget.constructor.prototype;
     const superProto = Object.getPrototypeOf(proto);
     const superSuperProto = Object.getPrototypeOf(superProto);
@@ -86,19 +87,26 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
         && Object.hasOwn(superSuperProto, 'setPos')
         && Object.hasOwn(superSuperProto, 'toDOM')
         && Object.getPrototypeOf(superSuperProto) === WidgetType.prototype;
-        
+
     if (isObsidianBuiltinMathWidget) {
         plugin.register(around(proto, {
+            /** Newly added by this plugin: Get a quote info for the position of this math widget. */
             getQuoteInfo() {
                 return function (): QuoteInfo | null {
                     return this.view ? getQuoteInfo(this.view.state, this.start) : null;
                 }
             },
+            /** Newly added by this plugin */
             markAsCorrected() {
                 return function () {
                     this.corrected = true;
                 }
             },
+            /** 
+             * Newly added by this plugin: Correct the LaTeX source code (this.math)
+             * based on the quote info, i.e. remove an appropreate number of ">"s 
+             * at the head of each line.
+             */
             correctIfNecessary() {
                 return function () {
                     if (this.block && !this.corrected) {
@@ -112,12 +120,11 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             },
             eq(old) {
                 return function (other: BuiltInMathWidget): boolean {
-                    // TODO: Can we further reduce the chance of unnecessary re-rendering of multi-line math blocks in blockquotes?
                     if (this.block && other.block) {
-                        // share editor view to make it easy to obtain QuoteInfo and minimize unnecessary re-rendering
+                        // Share editor view to make it easy to obtain QuoteInfo and minimize unnecessary re-rendering
                         if (this.view && !other.view) other.view = this.view;
                         if (other.view && !this.view) this.view = other.view;
-                        // correct math (i.e. remove an appropreate number of ">"s at the head of each line) before comparing
+                        // Correct math before comparing to minimize the chance of unnecessary re-rendering
                         if (!this.corrected) this.correctIfNecessary();
                         if (!other.corrected) other.correctIfNecessary();
                     }
@@ -126,18 +133,21 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             },
             initDOM(old) {
                 return function (view: EditorView) {
+                    // Set this.view to make it possible to obtain QuoteInfo and correct this.math
                     if (!this.view) this.view = view;
                     return old.call(this, view);
                 }
             },
             patchDOM(old) {
                 return function (dom: HTMLElement, view: EditorView) {
+                    // Set this.view to make it possible to obtain QuoteInfo and correct this.math
                     if (!this.view) this.view = view;
                     return old.call(this, dom, view);
                 }
             },
             render(old) {
                 return function (dom: HTMLElement) {
+                    // Correct this.math based on the quote level before rendering
                     this.correctIfNecessary();
                     old.call(this, dom);
                 }
