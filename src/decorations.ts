@@ -5,6 +5,7 @@ import { quoteInfoField } from 'quote-field';
 import { editorEditorField, editorLivePreviewField } from 'obsidian';
 import { rangesHaveOverlap } from 'utils';
 import MathInCalloutPlugin from 'main';
+import { BuiltInMathWidgetConstructor } from 'patch-widget-type';
 
 
 /**
@@ -15,7 +16,7 @@ import MathInCalloutPlugin from 'main';
  * The implementation of this function was deeply inspired by the state field
  * defined in the "QF" function in Obsidian's app.js.
  */
-export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathWidget: new (math: string, block: boolean) => WidgetType) => StateField.define<DecorationSet>({
+export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathWidget: BuiltInMathWidgetConstructor) => StateField.define<DecorationSet>({
     create() {
         return Decoration.none;
     },
@@ -57,9 +58,7 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                         if (quote) math = quote.correctMath(math);
 
                         const widget = new BuiltInMathWidget(math, block);
-                        // @ts-ignore
                         if (quote) widget.markAsCorrected();
-                        // @ts-ignore
                         widget.setPos(
                             block && math.startsWith("\n") ? mathContentBegin + 1 : mathContentBegin,
                             block && math.endsWith("\n") ? mathContentEnd - 1 : mathContentEnd

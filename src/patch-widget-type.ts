@@ -7,12 +7,13 @@ import MathInCalloutPlugin from 'main';
 import { QuoteInfo, quoteInfoField } from 'quote-field';
 
 // constructor of Obsidian's built-in math widget
-type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => BuiltInMathWidget;
+export type BuiltInMathWidgetConstructor = new (math: string, block: boolean) => BuiltInMathWidget;
 
 interface BuiltInMathWidget extends WidgetType {
     math: string;
     block: boolean;
     start: number;
+    setPos: (start: number, end: number) => void;
     // the followings are added by this plugin
     getQuoteInfo(): QuoteInfo | null;
     correctIfNecessary(): void;
@@ -64,7 +65,27 @@ export const patchDecoration = (
 
 function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boolean {
     const proto = widget.constructor.prototype;
-    const isObsidianBuiltinMathWidget = Object.hasOwn(widget, 'math') && Object.hasOwn(widget, 'block') && Object.hasOwn(proto, 'initDOM') && Object.hasOwn(proto, 'render') && !Object.hasOwn(proto, 'toDOM');
+    const superProto = Object.getPrototypeOf(proto);
+    const superSuperProto = Object.getPrototypeOf(superProto);
+    const isObsidianBuiltinMathWidget =
+        Object.hasOwn(widget, 'math')
+        && Object.hasOwn(widget, 'block')
+        && Object.hasOwn(proto, 'eq')
+        && Object.hasOwn(proto, 'initDOM')
+        && Object.hasOwn(proto, 'patchDOM')
+        && Object.hasOwn(proto, 'render')
+        && !Object.hasOwn(proto, 'toDOM')
+        && !Object.hasOwn(proto, 'updateDOM')
+        && Object.hasOwn(superProto, 'become')
+        && Object.hasOwn(superProto, 'updateDOM')
+        && Object.hasOwn(superSuperProto, 'addEditButton')
+        && Object.hasOwn(superSuperProto, 'hookClickHandler')
+        && Object.hasOwn(superSuperProto, 'resizeWidget')
+        && Object.hasOwn(superSuperProto, 'setOwner')
+        && Object.hasOwn(superSuperProto, 'setPos')
+        && Object.hasOwn(superSuperProto, 'toDOM')
+        && Object.getPrototypeOf(superSuperProto) === WidgetType.prototype;
+        
     if (isObsidianBuiltinMathWidget) {
         plugin.register(around(proto, {
             getQuoteInfo() {
