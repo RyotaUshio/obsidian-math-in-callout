@@ -2,7 +2,9 @@
 
 This is an [Obsidian.md](https://obsidian.md) plugin to add a better Live Preview support for math rendering inside callouts & blockquotes.
 
-> Note: The features of this plugin are originally a part of [Math Booster](https://ryotaushio.github.io/obsidian-math-booster/), another community plugin of mine. Once this plugin is approved by the Obsidian team, they will be removed from Math Booster.
+> Note: The feature of this plugin was originally a part of [Math Booster](https://ryotaushio.github.io/obsidian-math-booster/), another community plugin of mine. I completely rewrote it with a bunch of improvements, and decided to release it as a separate plugin for better modularity.
+> 
+> Once this plugin is approved by the Obsidian team, it will be removed from Math Booster.
 
 ## Features
 
