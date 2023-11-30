@@ -37,10 +37,6 @@ export default class MathInCalloutPlugin extends Plugin {
 				const editor = leaf.view.editor;
 				editor.setValue(editor.getValue());
 				leaf.view.setEphemeralState(eState);
-			} else if (leaf.view.getViewType() === 'canvas') {
-				for (const node of (leaf.view as any).canvas.nodes.values()) {
-					node.setText(node.text);
-				}
 			}
 		});
 	}
