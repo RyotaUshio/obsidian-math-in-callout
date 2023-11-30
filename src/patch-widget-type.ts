@@ -93,7 +93,13 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
             /** Newly added by this plugin: Get a quote info for the position of this math widget. */
             getQuoteInfo() {
                 return function (): QuoteInfo | null {
-                    return this.view ? getQuoteInfo(this.view.state, this.start) : null;
+                    // Here, the magic number "-1" is required to handle the following ill-formed case:
+                    // $$
+                    // > a
+                    // > a $$
+                    // In blockquote, this.start is set to the position of the first ">" by the Obsidian's built-in state field.
+                    // It causes this equation to be recognized as being in blockquote, but it's not.
+                    return this.view ? getQuoteInfo(this.view.state, this.start - 1) : null;
                 }
             },
             /** Newly added by this plugin */
