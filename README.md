@@ -52,6 +52,14 @@ But you can install the latest beta release using [BRAT](https://github.com/TfTH
 4.  _(Optional but highly recommended)_ Turn on `Auto-update plugins at startup` at the top of the page.
 5.  Go to `Community plugins > Installed plugins`. You will find “Better Math in Callouts & Blockquotes” in the list. Click on the toggle button to enable it.
 
+## Companion plugins
+
+Here's a list of other math-related plugins I've developed:
+
+- [Math Booster](https://github.com/RyotaUshio/obsidian-math-booster)
+- [No More Flickering Inline Math](https://github.com/RyotaUshio/obsidian-inline-math)
+- [MathJax Preamble Manager](https://github.com/RyotaUshio/obsidian-mathjax-preamble-manager)
+
 ## Support development
 
 If you find this plugin useful, please support my work by buying me a coffee!
