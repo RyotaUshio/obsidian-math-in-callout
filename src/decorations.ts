@@ -66,7 +66,7 @@ export const createCalloutDecorator = (BuiltInMathWidget: BuiltInMathWidgetConst
                         const overlap = rangesHaveOverlap(ranges, mathBegin, mathEnd);
 
                         // Add blockquote-related decorations to ">"s, mimicing Obsidian's built-in ones.
-                        if (quote && quote.level > 0) {
+                        if (block && quote && quote.level > 0) {
                             if (isSourceMode || quote.isBaseCallout || overlap) {
 
                                 const lineBegin = state.doc.lineAt(mathBegin);
@@ -101,7 +101,7 @@ export const createCalloutDecorator = (BuiltInMathWidget: BuiltInMathWidgetConst
                                 }
 
 
-                                if (lineEnd.text.slice(0, mathContentEnd - lineEnd.from).split('>').every(s => !s.trim())) {
+                                if (lineEnd.from < mathContentEnd && lineEnd.text.slice(0, mathContentEnd - lineEnd.from).split('>').every(s => !s.trim())) {
                                     decorations.push(
                                         Decoration.mark({ class: "cancel-cm-math" }).range(lineEnd.from, mathContentEnd)
                                     );
