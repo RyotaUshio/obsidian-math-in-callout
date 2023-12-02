@@ -24,7 +24,7 @@ export default class MathInCalloutPlugin extends Plugin {
 			setTimeout(() => {
 				if (notReadyNotice) notReadyNotice.hide();
 				new Notice(`${this.manifest.name}: You're ready!`, 1500);
-				this.registerEditorExtension(createCalloutDecorator(this, builtInMathWidget));
+				this.registerEditorExtension(createCalloutDecorator(builtInMathWidget));
 				this.rerender()
 			}, 100);
 		});

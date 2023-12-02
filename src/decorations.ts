@@ -1,5 +1,5 @@
 import { Range, StateField, Transaction, Extension } from '@codemirror/state';
-import { syntaxTree } from '@codemirror/language';
+import { ensureSyntaxTree, syntaxTree } from '@codemirror/language';
 import { EditorView, Decoration, DecorationSet, WidgetType } from '@codemirror/view';
 import { editorEditorField, editorLivePreviewField } from 'obsidian';
 import { getQuoteInfo, rangesHaveOverlap } from 'utils';
@@ -15,19 +15,21 @@ import { BuiltInMathWidgetConstructor } from 'patch-widget-type';
  * The implementation of this function was deeply inspired by the state field
  * defined in the "QF" function in Obsidian's app.js.
  */
-export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathWidget: BuiltInMathWidgetConstructor) => StateField.define<DecorationSet>({
+export const createCalloutDecorator = (BuiltInMathWidget: BuiltInMathWidgetConstructor) => StateField.define<DecorationSet>({
     create() {
         return Decoration.none;
     },
 
     update(prev: DecorationSet, tr: Transaction): DecorationSet {
         const { state } = tr;
-        const isSourceMode = !state.field(editorLivePreviewField);
-
         const view = state.field(editorEditorField);
-        const tree = syntaxTree(state);
+
+        if (view.composing) return prev.map(tr.changes); // User is using IME
+
+        const isSourceMode = !state.field(editorLivePreviewField);
         const doc = state.doc;
         const ranges = view.hasFocus ? state.selection.ranges : [];
+        const tree = syntaxTree(state);
         const decorations: Range<Decoration>[] = [];
 
         const makeDeco = (decorationSpec: { widget: WidgetType, block?: boolean, inclusiveEnd?: boolean, side?: number }, from: number, to: number) => {
@@ -117,14 +119,13 @@ export const createCalloutDecorator = (plugin: MathInCalloutPlugin, BuiltInMathW
                                             block: false,
                                             side: 1
                                         }).range(mathEnd, mathEnd)
-                                    );    
+                                    );
                                 }
                             } else {
                                 decorations.push(
                                     makeDeco({
                                         widget,
-                                        block: false,
-                                        side: 1
+                                        block: false
                                     }, mathBegin, mathEnd).range(mathBegin, mathEnd)
                                 );
                             }
