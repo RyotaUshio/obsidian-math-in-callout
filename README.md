@@ -56,7 +56,7 @@ But you can install the latest beta release using [BRAT](https://github.com/TfTH
 
 Here's a list of other math-related plugins I've developed:
 
-- [Math Booster](https://github.com/RyotaUshio/obsidian-math-booster)
+- [LaTeX-like Theorem & Equation Referencer](https://github.com/RyotaUshio/obsidian-latex-theorem-equation-referencer)
 - [No More Flickering Inline Math](https://github.com/RyotaUshio/obsidian-inline-math)
 - [MathJax Preamble Manager](https://github.com/RyotaUshio/obsidian-mathjax-preamble-manager)
 - [Auto-\\displaystyle Inline Math](https://github.com/RyotaUshio/obsidian-auto-displaystyle-inline-math)
