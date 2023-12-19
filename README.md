@@ -3,8 +3,6 @@
 This is an [Obsidian.md](https://obsidian.md) plugin to add a better Live Preview support for math rendering inside callouts & blockquotes.
 
 > Note: The feature of this plugin was originally a part of [LaTeX-like Theorem & Equation Referencer](https://ryotaushio.github.io/obsidian-latex-theorem-equation-referencer/), another community plugin of mine. I completely rewrote it with a bunch of improvements, and decided to release it as a separate plugin for better modularity.
-> 
-> Once this plugin is approved by the Obsidian team, it will be removed from LaTeX-like Theorem & Equation Referencer.
 
 ## Features
 
@@ -42,15 +40,14 @@ In Live Preview, the vanilla Obsidian misunderstands a ">" symbol at the beginni
 
 ## Installation
 
-Since this plugin is still in beta, it's not on the community plugin browser yet.
+You can find this plugin in the community plugin browser within Obsidian.
 
-But you can install the latest beta release using [BRAT](https://github.com/TfTHacker/obsidian42-brat):
+You can also install the latest beta release using [BRAT](https://github.com/TfTHacker/obsidian42-brat).
 
-1.  Install BRAT and enable it.
-2.  Go to `Options`. In the `Beta Plugin List` section, click on the `Add Beta plugin` button.
-3.  Copy and paste `RyotaUshio/obsidian-math-in-callout` in the pop-up prompt and click on **Add Plugin**.
-4.  _(Optional but highly recommended)_ Turn on `Auto-update plugins at startup` at the top of the page.
-5.  Go to `Community plugins > Installed plugins`. You will find “Better Math in Callouts & Blockquotes” in the list. Click on the toggle button to enable it.
+1. Install the latest version of BRAT and enable it.
+2. Open the following URL in browser: `obsidian://brat?plugin=RyotaUshio/obsidian-math-in-callout`.
+3. Click the "Add Plugin" button.
+4. _(Optional but highly recommended)_ In the BRAT settings, turn on `Auto-update plugins at startup` at the top of the page.
 
 ## Companion plugins
 
