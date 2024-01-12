@@ -1,8 +1,8 @@
 # Better Math in Callouts & Blockquotes
 
-This is an [Obsidian.md](https://obsidian.md) plugin to add a better Live Preview support for math rendering inside callouts & blockquotes.
+This is an [Obsidian.md](https://obsidian.md) plugin to add better Live Preview support for math rendering inside callouts & blockquotes.
 
-> Note: The feature of this plugin was originally a part of [LaTeX-like Theorem & Equation Referencer](https://ryotaushio.github.io/obsidian-latex-theorem-equation-referencer/), another community plugin of mine. I completely rewrote it with a bunch of improvements, and decided to release it as a separate plugin for better modularity.
+> Note: The feature of this plugin was originally a part of [LaTeX-like Theorem & Equation Referencer](https://ryotaushio.github.io/obsidian-latex-theorem-equation-referencer/), another community plugin of mine. I completely rewrote it with a bunch of improvements and decided to release it as a separate plugin for better modularity.
 
 ## Features
 
