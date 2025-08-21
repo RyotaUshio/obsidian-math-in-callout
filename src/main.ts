@@ -2,7 +2,8 @@ import { MarkdownView, Notice, Plugin } from 'obsidian';
 import { createCalloutDecorator } from 'decorations';
 import { quoteInfoField } from 'quote-field';
 import { patchDecoration } from 'patch-widget-type';
-import { DEFAULT_SETTINGS, MathInCalloutSettingTab, MathInCalloutSettings } from 'settings';
+import type { MathInCalloutSettings } from 'settings';
+import { DEFAULT_SETTINGS, MathInCalloutSettingTab } from 'settings';
 
 export default class MathInCalloutPlugin extends Plugin {
 	patchSucceeded: boolean;
@@ -32,7 +33,7 @@ export default class MathInCalloutPlugin extends Plugin {
 					}
 				}
 				this.registerEditorExtension(createCalloutDecorator(builtInMathWidget));
-				this.rerender()
+				this.rerender();
 			}, 100);
 		});
 	}

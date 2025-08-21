@@ -1,10 +1,10 @@
 import { Decoration } from '@codemirror/view';
-import { EditorView } from '@codemirror/view';
+import type { EditorView } from '@codemirror/view';
 import { WidgetType } from '@codemirror/view';
 import { around } from "monkey-around";
 
-import MathInCalloutPlugin from 'main';
-import { QuoteInfo } from 'quote-field';
+import type MathInCalloutPlugin from 'main';
+import type { QuoteInfo } from 'quote-field';
 import { getQuoteInfo } from 'utils';
 
 // constructor of Obsidian's built-in math widget
@@ -45,7 +45,7 @@ export const patchDecoration = (
                     }
                 }
                 return old.call(this, spec);
-            }
+            };
         },
         widget(old) {
             return function (spec: { widget?: WidgetType }) {
@@ -57,11 +57,11 @@ export const patchDecoration = (
                     }
                 }
                 return old.call(this, spec);
-            }
+            };
         }
     });
     plugin.register(uninstaller);
-}
+};
 
 
 function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boolean {
@@ -100,13 +100,13 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
                     // In blockquote, this.start is set to the position of the first ">" by the Obsidian's built-in state field.
                     // It causes this equation to be recognized as being in blockquote, but it's not.
                     return this.view ? getQuoteInfo(this.view.state, this.start - 1) : null;
-                }
+                };
             },
             /** Newly added by this plugin */
             markAsCorrected() {
                 return function () {
                     this.corrected = true;
-                }
+                };
             },
             /** 
              * Newly added by this plugin: Correct the LaTeX source code (this.math)
@@ -122,7 +122,7 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
                             this.markAsCorrected();
                         }
                     }
-                }
+                };
             },
             eq(old) {
                 return function (other: BuiltInMathWidget): boolean {
@@ -135,28 +135,28 @@ function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boole
                         if (!other.corrected) other.correctIfNecessary();
                     }
                     return old.call(this, other);
-                }
+                };
             },
             initDOM(old) {
                 return function (view: EditorView) {
                     // Set this.view to make it possible to obtain QuoteInfo and correct this.math
                     if (!this.view) this.view = view;
                     return old.call(this, view);
-                }
+                };
             },
             patchDOM(old) {
                 return function (dom: HTMLElement, view: EditorView) {
                     // Set this.view to make it possible to obtain QuoteInfo and correct this.math
                     if (!this.view) this.view = view;
                     return old.call(this, dom, view);
-                }
+                };
             },
             render(old) {
                 return function (dom: HTMLElement) {
                     // Correct this.math based on the quote level before rendering
                     this.correctIfNecessary();
                     old.call(this, dom);
-                }
+                };
             }
         }));
         return true;

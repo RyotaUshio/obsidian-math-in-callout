@@ -1,5 +1,5 @@
 import { PluginSettingTab, Setting } from 'obsidian';
-import MyPlugin from 'main';
+import type MyPlugin from 'main';
 
 
 export interface MathInCalloutSettings {
@@ -22,7 +22,7 @@ export class MathInCalloutSettingTab extends PluginSettingTab {
 		this.containerEl.empty();
 
         new Setting(this.containerEl)
-            .setDesc('If something is not working, type some math expression outside callouts in Live Preview.')
+            .setDesc('If something is not working, type some math expression outside callouts in Live Preview.');
 
         new Setting(this.containerEl)
             .setName("Show setup guidance notifications")

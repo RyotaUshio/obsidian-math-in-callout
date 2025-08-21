@@ -1,28 +1,34 @@
 {
 	"name": "math-in-callout",
-	"version": "0.3.7",
+	"version": "0.3.8",
 	"description": "Add a better Live Preview support for math rendering inside callouts & blockquotes.",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"lint": "eslint src/ --ext .ts",
+		"lint:fix": "eslint src/ --ext .ts,.tsx --fix",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
 	"author": "Ryota Ushio",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
-		"esbuild": "0.17.3",
+		"@codemirror/language": "^6.11.3",
+		"@codemirror/state": "^6.5.2",
+		"@codemirror/view": "^6.38.1",
+		"@eslint/eslintrc": "^3.3.1",
+		"@eslint/js": "^9.33.0",
+		"@lezer/common": "^1.2.3",
+		"@types/node": "^24.3.0",
+		"@typescript-eslint/eslint-plugin": "8.40.0",
+		"@typescript-eslint/parser": "8.40.0",
+		"builtin-modules": "5.0.0",
+		"esbuild": "0.25.9",
+		"globals": "^16.3.0",
+		"monkey-around": "^3.0.0",
 		"obsidian": "latest",
-		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"tslib": "2.8.1",
+		"typescript": "5.9.2"
 	},
-	"dependencies": {
-		"@codemirror/language": "^6.9.1",
-		"@lezer/common": "^1.1.0",
-		"monkey-around": "^2.3.0"
-	}
+	"packageManager": "pnpm@10.15.0"
 }

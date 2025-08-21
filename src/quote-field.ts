@@ -1,5 +1,6 @@
 import { syntaxTree } from '@codemirror/language';
-import { StateField, Transaction, RangeSet, RangeValue, RangeSetBuilder, EditorState } from '@codemirror/state';
+import type { Transaction, RangeSet, EditorState } from '@codemirror/state';
+import { StateField, RangeValue, RangeSetBuilder } from '@codemirror/state';
 
 /**
  * A range value that represents a blockquote or a callout. 
@@ -20,7 +21,7 @@ export class QuoteInfo extends RangeValue {
     }
 
     eq(other: QuoteInfo) {
-        return this.level === other.level && this.isBaseCallout === other.isBaseCallout
+        return this.level === other.level && this.isBaseCallout === other.isBaseCallout;
     }
 
     /** Remove ">"s that is misrecognized as inequality signs. */
@@ -28,11 +29,12 @@ export class QuoteInfo extends RangeValue {
         if (!this.pattern) return math;
 
         const lines = math.split("\n");
-        return lines
+        const corrected = lines
             .map((line) => {
                 const match = line.match(this.pattern!);
                 return match ? line.slice(match[0].length) : line;
             }).join("\n");
+        return corrected;
     }
 
     getBlockquoteBorderPositions(state: EditorState, from: number, to: number) {

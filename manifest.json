@@ -1,11 +1,15 @@
 {
 	"id": "math-in-callout",
 	"name": "Better Math in Callouts & Blockquotes",
-	"version": "0.3.7",
+	"version": "0.3.8",
 	"minAppVersion": "1.3.15",
 	"description": "Add better Live Preview support for math rendering inside callouts & blockquotes.",
 	"author": "Ryota Ushio",
 	"authorUrl": "https://github.com/RyotaUshio",
-	"fundingUrl": "https://www.buymeacoffee.com/ryotaushio",
+	"fundingUrl": {
+		"GitHub Sponsor": "https://github.com/sponsors/RyotaUshio",
+		"Buy Me a Coffee": "https://www.buymeacoffee.com/ryotaushio",
+		"Ko-fi": "https://ko-fi.com/ryotaushio"
+	},
 	"isDesktopOnly": false
 }

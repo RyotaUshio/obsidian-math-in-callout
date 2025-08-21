@@ -1,10 +1,11 @@
-import { Range, StateField, Transaction, Extension } from '@codemirror/state';
-import { ensureSyntaxTree, syntaxTree } from '@codemirror/language';
-import { EditorView, Decoration, DecorationSet, WidgetType } from '@codemirror/view';
+import type { Range, Transaction, Extension } from '@codemirror/state';
+import { StateField } from '@codemirror/state';
+import { syntaxTree } from '@codemirror/language';
+import type { DecorationSet, WidgetType } from '@codemirror/view';
+import { EditorView, Decoration } from '@codemirror/view';
 import { editorEditorField, editorLivePreviewField } from 'obsidian';
 import { getQuoteInfo, rangesHaveOverlap } from 'utils';
-import MathInCalloutPlugin from 'main';
-import { BuiltInMathWidgetConstructor } from 'patch-widget-type';
+import type { BuiltInMathWidgetConstructor } from 'patch-widget-type';
 
 
 /**
