@@ -65,28 +65,20 @@ export const patchDecoration = (
 
 
 function patchMathWidget(plugin: MathInCalloutPlugin, widget: WidgetType): boolean {
-    // check if the given widget is the built-in math widget based on its & its prototype's properties
+    // Check if the given widget is the built-in math widget based on the properties and methods it has.
+    // If we make the condition too strict, it may not work with the future version of Obsidian.
+    // On the other hand, if we make it too loose, it may misjudge another widget type by another plugin as 
+    // the built-in math widget.
     const proto = widget.constructor.prototype;
-    const superProto = Object.getPrototypeOf(proto);
-    const superSuperProto = Object.getPrototypeOf(superProto);
     const isObsidianBuiltinMathWidget =
         Object.hasOwn(widget, 'math')
         && Object.hasOwn(widget, 'block')
-        && Object.hasOwn(proto, 'eq')
-        && Object.hasOwn(proto, 'initDOM')
-        && Object.hasOwn(proto, 'patchDOM')
-        && Object.hasOwn(proto, 'render')
-        && !Object.hasOwn(proto, 'toDOM')
-        && !Object.hasOwn(proto, 'updateDOM')
-        && Object.hasOwn(superProto, 'become')
-        && Object.hasOwn(superProto, 'updateDOM')
-        && Object.hasOwn(superSuperProto, 'addEditButton')
-        && Object.hasOwn(superSuperProto, 'hookClickHandler')
-        && Object.hasOwn(superSuperProto, 'resizeWidget')
-        && Object.hasOwn(superSuperProto, 'setOwner')
-        && Object.hasOwn(superSuperProto, 'setPos')
-        && Object.hasOwn(superSuperProto, 'toDOM')
-        && Object.getPrototypeOf(superSuperProto) === WidgetType.prototype;
+        && 'initDOM' in proto
+        && 'render' in proto
+        && 'setPos' in proto
+        && 'hookClickHandler' in proto
+        && 'addEditButton' in proto
+        && 'resizeWidget' in proto
 
     if (isObsidianBuiltinMathWidget) {
         plugin.register(around(proto, {
